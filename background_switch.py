@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import os
 import sys
 import time
@@ -6,7 +7,7 @@ from random import randint
 from PIL import Image
 
 # Time Configuration
-SECONDS=5
+SECONDS=20
 MINUTES=0
 HOURS=0
 
@@ -33,22 +34,25 @@ def changeBackground():
 		sys.exit(-1)
 
 	directory_size = len(files)
+	foundImg = False
+	img_number = None
 
-	# TODO: Throw an error if Img folder is empty
-	img_number = randint(0, directory_size-1)
+	while(foundImg == False):
+		img_number = randint(0, directory_size-1)
+		foundImg = isPNG(files[img_number]) or isJPG(files[img_number])
 
-	# TODO: Need to check if file is actually a file and not a folder
 
 	path = os.path.abspath(IMG_FOLDER + "/" + files[img_number])
 	final_path = fixSpaces(path)
-	print final_path;
 	os.system("gsettings set org.gnome.desktop.background picture-uri file://" + final_path)
+	print final_path;
 
 # Check if File is a PNG file
 def isPNG(fileName):
 	fileName = fileName.lower()
 
 	fileLen = len(fileName)
+
 	if fileName[fileLen - 4] != '.':
 		return False
 	if fileName[fileLen - 3] != 'p':
@@ -65,6 +69,7 @@ def isJPG(fileName):
 	fileName = fileName.lower()
 
 	fileLen = len(fileName)
+
 	if fileName[fileLen - 4] != '.':
 		return False
 	if fileName[fileLen - 3] != 'j':
@@ -82,27 +87,30 @@ def verifyDirectory():
 	try:
 		files = os.listdir(IMG_FOLDER)
 	except IOError:
-		print "Folder path is bad. Please recheck that folder path is correct."
-		sys.exit(-1)
-
-	hasPicture = False
+		print "Folder path is bad. Please re-check that folder path is correct."
+		return False
 
 	if len(files) == 0:
-		raise "Directory size is 0"
+		print "Folder has 0 (zero) files. Please re-check folder."
+		return False
 
 	for f in files:
 		if isJPG(f) or isPNG(f):
 			return True
 
-	return hasPicture
+	# No jpgs or pngs found
+	print "Folder has 0 (zero) picture files (png or jpg). Please re-check folder."
+	return False
 
 # Runner of the program
 def run():
 	# Verify that Img folder is not empty and does not contain all folders
 	if verifyDirectory() == False:
-		raise NameError('Directory failed verification')
+		sys.exit(-1)
+
 	# Get total number of seconds
 	totalSeconds = HOURS * 60 * 60 + MINUTES * 60 + SECONDS
+
 	while(True):
 		changeBackground()
 		time.sleep(totalSeconds)
