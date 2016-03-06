@@ -46,7 +46,6 @@ def changeBackground():
 	path = os.path.abspath(IMG_FOLDER + "/" + files[img_number])
 	final_path = fixSpaces(path)
 	os.system("gsettings set org.gnome.desktop.background picture-uri file://" + final_path)
-	print final_path;
 
 # Check if File is a PNG file
 def isPNG(fileName):
