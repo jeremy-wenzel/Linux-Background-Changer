@@ -12,7 +12,7 @@ MINUTES=0
 HOURS=0
 
 # File Configuration
-IMG_FOLDER="/home/jeremy/Downloads/Background_Imgs"
+IMG_FOLDER="/path/to/images"
 
 # Fixes anystring that has spaces to be a linux path
 def fixSpaces(string):
@@ -37,6 +37,7 @@ def changeBackground():
 	foundImg = False
 	img_number = None
 
+	# Find an image that is a png
 	while(foundImg == False):
 		img_number = randint(0, directory_size-1)
 		foundImg = isPNG(files[img_number]) or isJPG(files[img_number])
@@ -84,16 +85,19 @@ def isJPG(fileName):
 # Verify that the director given by the user is valid directory
 # and that the directory has at least 1 picture
 def verifyDirectory():
+	# Get the list of files
 	try:
 		files = os.listdir(IMG_FOLDER)
 	except IOError:
 		print "Folder path is bad. Please re-check that folder path is correct."
 		return False
 
+	# If there are no files in the directory, bad folder
 	if len(files) == 0:
 		print "Folder has 0 (zero) files. Please re-check folder."
 		return False
 
+	# Go through all the files and find if there is a jpg or png
 	for f in files:
 		if isJPG(f) or isPNG(f):
 			return True
@@ -111,6 +115,7 @@ def run():
 	# Get total number of seconds
 	totalSeconds = HOURS * 60 * 60 + MINUTES * 60 + SECONDS
 
+	# Runs the program
 	while(True):
 		changeBackground()
 		time.sleep(totalSeconds)
